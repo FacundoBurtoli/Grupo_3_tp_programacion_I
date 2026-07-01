@@ -1,7 +1,7 @@
 def pedir_cadena(mensaje, minimo):
     cadena = input(mensaje)
     while len(cadena) < minimo:
-        cadena = input(f'ERROR: ', {mensaje}, 'valido')
+        cadena = input(f'ERROR: , {mensaje}, valido')
     return cadena
 
 def pedir_entero(mensaje, minimo, maximo):
@@ -26,7 +26,7 @@ def pedir_categoria(mensaje, opciones):
         seleccion = input(mensaje)
         for i in range(len(opciones)):
             if seleccion == opciones[i]:
-                bandera == True
+                bandera = True
                 break
     return  seleccion
 

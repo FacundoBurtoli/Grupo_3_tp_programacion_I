@@ -8,6 +8,7 @@ def definir_lugares(zona):
         return lugares
 
 def definir_mensaje(temporadas, zona, presupuesto, tipo_viaje, nivel_estres, tipo_hotel, edad, maletas, duracion_estadia, excursiones):
+    mensajes = ""
     if  temporadas == "Verano" and zona == "Zona Central" and presupuesto > 80000:
         mensajes += (f"Se le recomienda lugares como {definir_lugares}, que podrían ayudarte a tomarte un descanso.")
 
@@ -136,7 +137,7 @@ def recomendar_hotel_y_costo(tipo_hotel, zona, categoria):
                 hotel_recomendado = "Se le recomienda el palacio dahau en Buenos Aires, o el castillo hotel victoria en Cordoba o Park hyatt en mendoza ."
                 costo_hotel = 90000
     if categoria == False:
-        Valor = costo_hotel
+        valor = costo_hotel
     else: 
         valor = hotel_recomendado
     return valor
@@ -272,3 +273,4 @@ def obtener_valor_excursion(excursiones, temporadas, zona):
                         valor_excursion = 40000
                     case 'Zona Central':
                         valor_excursion = 45000
+    return valor_excursion

@@ -49,9 +49,10 @@ def main():
         if not acceso:
             print("Acceso denegado.")
             exit()
-        elif login == "no":
-            exit()
+    elif login == "no":
+        exit()
 
+    # --- INICIO DEL BUCLE DE VIAJEROS ---
     while seguir == "si":
         nombre = pedir_cadena("Ingrese su nombre: ", 2)
         edad = pedir_entero("Ingrese su edad (1-100): ", 1, 100)
@@ -65,68 +66,77 @@ def main():
         duracion_estadia = pedir_entero("¿Cuánto son los días que usted se quedará?: ", 1, maximo=None)
         maletas = pedir_entero("¿Cuántas maletas son las que llevará?(1-3): ", 1, 3)
         tipo_viaje = pedir_categoria("¿De qué manera prefiere ir? (Auto, Colectivo, Avión): ", ['Auto', 'Colectivo', 'Avión'])
-        excursiones = pedir_categoria("¿Cómo desea realizar usted las excursiones? (Guiada o Cuenta Propia): " ['Guiada', 'Cuenta Propia'])
+        excursiones = pedir_categoria("¿Cómo desea realizar usted las excursiones? (Guiada o Cuenta Propia): ", ['Guiada', 'Cuenta Propia'])
 
         usuarios_ingresados += 1
         total_presupuesto += presupuesto
 
-# PROCESO.
+        # PROCESO INDIVIDUAL (Dentro del while)
+        
+        # Parte 1: CONTADORES (Se debe acumular usando +=)
+        # Nota: Ajustado a 'Avión' con tilde para que coincida con el input
+        pres_avion += cant_tipo_viaje(tipo_viaje, 'Avión')
+        pres_auto += cant_tipo_viaje(tipo_viaje, 'Auto')
+        pres_colectivo += cant_tipo_viaje(tipo_viaje, 'Colectivo')
 
-# Parte 1: CONTADORES.
-    pres_avion = cant_tipo_viaje(tipo_viaje, 'Avion')
-    pres_auto = cant_tipo_viaje(tipo_viaje, 'Auto')
-    pres_colectivo = cant_tipo_viaje(tipo_viaje, 'Colectivo')
+        # Acumular presupuesto
+        acu_presupuesto = acumular_presupuesto(acu_presupuesto, presupuesto)
+        
+        # Obtener pres maximo y minimo generales
+        pres_maximo = obtener_maximo(pres_maximo, presupuesto)
+        pres_minimo = obtener_minimo(pres_minimo, presupuesto)
 
-# Acumular
-    acu_presupuesto = acumular_presupuesto(acu_presupuesto, presupuesto)
+        # Máximos y mínimos por zona
+        if zona == "Zona Sur":
+            maximo_sur = obtener_maximo(maximo_sur, presupuesto)
+            minimo_sur = obtener_minimo(minimo_sur, presupuesto)
+        elif zona == "Zona Norte":
+            maximo_norte = obtener_maximo(maximo_norte, presupuesto)
+            minimo_norte = obtener_minimo(minimo_norte, presupuesto)
+        else: 
+            maximo_central = obtener_maximo(maximo_central, presupuesto)
+            minimo_central = obtener_minimo(minimo_central, presupuesto)
+        
+        # Parte 2: LUGARES SEGÚN SU ZONA
+        lugares = definir_lugares(zona)
+
+        # Parte 3: REGLAS (Guardamos el resultado en la variable 'mensajes')
+        mensajes = definir_mensaje(temporadas, zona, presupuesto, tipo_viaje, nivel_estres, tipo_hotel, edad, maletas, duracion_estadia, excursiones)
+
+        # Parte 4: CLASIFICACIONES DEL HOTEL
+        hotel_recomendado = recomendar_hotel_y_costo(tipo_hotel, zona, True)
+        costo_hotel = recomendar_hotel_y_costo(tipo_hotel, zona, False)
+
+        # Parte 5: TIPOS DE VIAJE Y SUS COSTOS
+        costo_viaje = obtener_costo_viaje(zona, temporadas, tipo_viaje)
+
+        # Parte 6: VALORES DE LAS EXCURSIONES
+        valor_excursion = obtener_valor_excursion(excursiones, temporadas, zona)
+        
+        # Calcular el costo total de este viaje individual
+        costo_total = costo_hotel + costo_viaje + valor_excursion
+
+        # SALIDA INDIVIDUAL (Muestra los datos del usuario actual antes de preguntar si sigue)
+        mostrar_datos(nombre, lugares, temporadas, zona)
+
+        # Preguntar si desea continuar (Última instrucción dentro del while)
+        seguir = pedir_categoria("\nDesea seguir? (si/no): ", ['si', 'no'])
     
-# Obtener pres maximo
-    pres_maximo = obtener_maximo(pres_maximo, presupuesto)
-    pres_minimo = obtener_minimo(pres_minimo, presupuesto)
-    maximo_sur = obtener_maximo(maximo_sur, presupuesto)
+    # --- FIN DEL BUCLE DE VIAJEROS ---
 
-    if zona == "Zona Sur":
-        maximo_sur = obtener_maximo(maximo_sur, presupuesto)
-        minimo_sur = obtener_maximo(minimo_sur, presupuesto)
-    elif zona == "Zona Norte":
-        maximo_norte = obtener_maximo(maximo_norte, presupuesto)
-        minimo_norte = obtener_maximo(minimo_norte, presupuesto)
-    else: 
-        maximo_central = obtener_maximo(maximo_central, presupuesto)
-        minimo_central = obtener_maximo(minimo_central, presupuesto)
-    
-# Parte 2: LUGARES SEGÚN SU ZONA.
-    lugares = definir_lugares(zona)
-
-# Parte 3: REGLAS.
-    mensajes = definir_mensaje(temporadas, zona, presupuesto, tipo_viaje, nivel_estres, tipo_hotel, edad, maletas, duracion_estadia, excursiones)
-
-# Parte 4: CLASIFICACIONES DEL HOTEL.
-    hotel_recomendado = recomendar_hotel_y_costo(tipo_hotel, zona, True)
-    costo_hotel = recomendar_hotel_y_costo(tipo_hotel, zona, False)
-
-# Parte 5: TIPOS DE VIAJE Y SUS COSTOS.
-    costo_viaje = obtener_costo_viaje(zona, temporadas, tipo_viaje)
-
-# Parte 6: VALORES DE LAS EXCURSIONES.
-    valor_excursion = obtener_valor_excursion(excursiones, temporadas, zona)
-    
-
-# SALIDA
-    mostrar_datos(nombre, lugares, temporadas, zona)
-
-    seguir = pedir_categoria("\nDesea seguir? (si/no): ", ['si', 'no'])
-
-    costo_total = int(costo_hotel) + int(costo_viaje) + int(valor_excursion)
-
+    # CÁLCULOS GLOBALES (Afuera del while, cuando ya cargaron todos los usuarios)
     if usuarios_ingresados > 0:
         porc_avion = (pres_avion / usuarios_ingresados) * 100
         porc_auto =  (pres_auto / usuarios_ingresados) * 100
         porc_colectivo = (pres_colectivo / usuarios_ingresados) * 100
+        promedio = total_presupuesto / usuarios_ingresados
 
-    promedio = total_presupuesto / usuarios_ingresados
-    costo_total = costo_hotel + costo_viaje + valor_excursion
+        # MOSTRAR INFORME FINAL (Con todas las variables ordenadas correctamente)
+        mostrar_inorme_final(
+            tipo_viaje, costo_viaje, hotel_recomendado, costo_hotel, 
+            excursiones, valor_excursion, costo_total, porc_avion, 
+            porc_auto, porc_colectivo, pres_avion, pres_auto, 
+            pres_colectivo, promedio, presupuesto, mensajes
+        )
 
-    mostrar_inorme_final(tipo_viaje, costo_viaje, hotel_recomendado, costo_hotel, excursiones, valor_excursion, costo_total, porc_avion, porc_auto, porc_colectivo, pres_avion, pres_auto, pres_colectivo, promedio, costo_total)
-
-#Fin.
+# Fin.
