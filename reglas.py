@@ -1,10 +1,11 @@
 def definir_lugares(zona):
     if zona == "Zona Norte":
-        return "Salta, Jujuy, o Cataratas del Iguazú"
+        resultado = "Salta, Jujuy, o Cataratas del Iguazú"
     elif zona == "Zona Sur":
-        return "Bariloche, Chubut, o Tierra del Fuego"
+        resultado = "Bariloche, Chubut, o Tierra del Fuego"
     else:
-        return "Buenos Aires, Cordoba, o Mendoza"
+        resultado = "Buenos Aires, Cordoba, o Mendoza"
+    return resultado
 
 def definir_mensaje(temporadas, zona, presupuesto, tipo_viaje, nivel_estres, tipo_hotel, edad, maletas, duracion_estadia, excursiones):
     mensajes = []
