@@ -1,88 +1,132 @@
 def definir_lugares(zona):
-        if zona == "Zona Norte":
-            lugares = "Salta, Jujuy, o Cataratas del Iguazú"
-        elif zona == "Zona Sur":
-            lugares = "Bariloche, Chubut, o Tierra del Fuego"
-        else:
-            lugares = "Buenos Aires, Cordoba, o Mendoza"
-        return lugares
+    if zona == "Zona Norte":
+        return "Salta, Jujuy, o Cataratas del Iguazú"
+    elif zona == "Zona Sur":
+        return "Bariloche, Chubut, o Tierra del Fuego"
+    else:
+        return "Buenos Aires, Cordoba, o Mendoza"
 
 def definir_mensaje(temporadas, zona, presupuesto, tipo_viaje, nivel_estres, tipo_hotel, edad, maletas, duracion_estadia, excursiones):
-    mensajes = ""
-    if  temporadas == "Verano" and zona == "Zona Central" and presupuesto > 80000:
-        mensajes += (f"Se le recomienda lugares como {definir_lugares}, que podrían ayudarte a tomarte un descanso.")
+    mensajes = []
+    lugares = definir_lugares(zona)
 
-    if temporadas == "Otoño" and zona == "Zona Central":
-        mensajes += (f"Se le recomienda lugares como {definir_lugares}, y llevar abrigo.")
+    lista_reglas = [
+        {
+            "condiciones": [temporadas == "Verano", zona == "Zona Central", presupuesto > 80000],
+            "mensaje": f"Se le recomienda lugares como {lugares}, que podrían ayudarte a tomarte un descanso."
+        },
+        {
+            "condiciones": [temporadas == "Otoño", zona == "Zona Central"],
+            "mensaje": f"Se le recomienda lugares como {lugares}, y llevar abrigo."
+        },
+        {
+            "condiciones": [zona == 'Zona Central', maletas > 2, tipo_viaje == 'Auto'],
+            "mensaje": f"Se le recomienda lugares como {lugares}, tener un baul amplio en su vehiculo."
+        },
+        {
+            "condiciones": [temporadas == "Verano", zona == "Zona Norte", presupuesto > 70000],
+            "mensaje": f"Se le recomienda lugares como {lugares}, que podrían ayudarte a relajarte."
+        },
+        {
+            "condiciones": [nivel_estres > 7],
+            "mensaje": f"Su nivel de estrés es alto, lugares como {lugares} podrían ayudarle a poder tener unas vacaciones relajadas y así bajar su alto estrés."
+        },
+        {
+            "condiciones": [nivel_estres >= 5, nivel_estres <= 7],
+            "mensaje": f"Le podemos recomendar un viaje tranquilo, a lugares como {lugares}, para así bajar un poco el ritmo."
+        },
+        {
+            "condiciones": [nivel_estres < 5],
+            "mensaje": f"Tenés una buena energía, podriamos recomendarte lugares como {lugares} para poder hacer algunas actividades."
+        },
+        {
+            "condiciones": [tipo_hotel == 5, presupuesto < 60000],
+            "mensaje": "Elegiste un hotel de 5 estrellas, pero el presupuesto no te alcanzará para poder pagar dicha estadia."
+        },
+        {
+            "condiciones": [edad >= 18, edad <= 30],
+            "mensaje": "Por tu edad, podrías disfrutar de destinos con mucho movimiento y vida nocturna como los antes mencionados."
+        },
+        {
+            "condiciones": [edad < 18],
+            "mensaje": "Por tu edad, podrías disfrutar de un viaje familiar hacia lugares como los antes mencionados, con actividades tranquilas y seguras."
+        },
+        {
+            "condiciones": [zona == "Zona Sur", tipo_viaje == "Auto", maletas > 2],
+            "mensaje": "Si viajas al sur en auto, el trayecto será largo. Aunque usted debería optimizar la cantidad de maletas dentro del auto."
+        },
+        {
+            "condiciones": [presupuesto < 40000 or duracion_estadia > 10],
+            "mensaje": "Teniendo en cuenta tu presupuesto y tu duración en el viaje, te convendría optar por lugares económicos"
+        },
+        {
+            "condiciones": [excursiones != "Guiada"],
+            "mensaje": "Si vas a ir por tu cuenta al viaje, tendrás que investigar bien las excursiones antes de viajar al lugar que haya elegido."
+        },
+        {
+            "condiciones": [nivel_estres > 8, temporadas == "Invierno", tipo_hotel >= 4],
+            "mensaje": "Vaya, excelente elección mi amigo! Destinos como estos, le podría resultar útil para poder descansar y despejar su mente en esta temporada invernal."
+        },
+        {
+            "condiciones": [duracion_estadia > 7, presupuesto <= 50000],
+            "mensaje": "Vas a estar varios días en lugares como los antes mencionados. Por lo tanto, recomendamos que organices bien tus gastos! Ya que si usas mucho tu dinero, vas a quedarte corto en presupuesto."
+        },
+        {
+            "condiciones": [tipo_viaje == "Avión", zona == "Zona Sur"],
+            "mensaje": "Buena idea, ya que tomar el avión para viajar a los lugares de la zona sur, ayuda a ahorrar mucho tiempo."
+        },
+        {
+            "condiciones": [tipo_hotel == 1 or tipo_hotel == 2],
+            "mensaje": "Viaje largo con presupuesto ajustado: planificar gastos."
+        },
+        {
+            "condiciones": [temporadas == "Verano", nivel_estres > 6, presupuesto > 70000, tipo_hotel >= 4],
+            "mensaje": "Esto le resultará un viaje ideal, debido a que tendrá un verano de relajación total con un hotel premium."
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", zona == "Zona Sur", duracion_estadia < 5],
+            "mensaje": "Viajar al sur en colectivo podría volverse bastante largo. Tal vez te conviene aumentar los días de estadía para aprovechar mejor manera el viaje."
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", nivel_estres > 7],
+            "mensaje": "Como tenés un nivel de estrés alto, te recomendamos que priorices la comodidad durante el viaje. En trayectos largos en colectivo, podrías sentirte un poco incómodo, por lo que sería bueno elegir asientos más confortables, o considerar otra opción."
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", duracion_estadia <= 3],
+            "mensaje": "Para viajes cortos, el colectivo puede ser práctico y económico"
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", zona == "Zona Norte"],
+            "mensaje": "Viajar en colectivo al norte, es una buena opción. Apesar de ser un viaje largo, te permite viajar de forma más tranquilidad."
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", temporadas == "Verano"],
+            "mensaje": "Viajar en colectivo en verano te será cómodo gracias al aire acondicionado que posee el mismo, también te recomendamos llevar agua fría y ropa liviana para mayor comodidad."
+        },
+        {
+            "condiciones": [tipo_viaje == "Colectivo", zona == "Zona Norte", presupuesto < 60000, maletas <= 2],
+            "mensaje": "Viajar en colectivo al Norte, te podría resultar accesible para el viaje. Además al no llevar poco equipaje, te resultará viajar mucho mas cómodo."
+        },
+        {
+            "condiciones": [maletas > 3],
+            "mensaje": "Y se recomienda llevar menor equipaje."
+        },
+        {
+            "condiciones": [maletas <= 3],
+            "mensaje": "Y su cantidad de equipaje adecuada."
+        }
+    ]
 
-    if zona == 'Zona Central' and maletas > 2 and tipo_viaje == 'Auto':
-        mensajes += (f"Se le recomienda lugares como {definir_lugares}, tener un baul amplio en su vehiculo.")
+    for regla in lista_reglas:
+        cumple_todas = True
+        for condicion in regla["condiciones"]:
+            if not condicion:
+                cumple_todas = False
+                break
+        if cumple_todas:
+            mensajes.append(regla["mensaje"])
 
-    if temporadas == "Verano" and zona == "Zona Norte" and presupuesto > 70000:
-        mensajes += (f"Se le recomienda lugares como {definir_lugares}, que podrían ayudarte a relajarte.")
-
-    if nivel_estres > 7:
-        mensajes += (f" Su nivel de estrés es alto, lugares como {definir_lugares} podrían ayudarle a poder tener unas vacaciones relajadas y así bajar su alto estrés.")
-    else:
-        if nivel_estres >= 5:
-            mensajes += (f"Le podemos recomendar un viaje tranquilo, a lugares como {definir_lugares}, para así bajar un poco el ritmo.")
-        else:
-            mensajes += (f" Tenés una buena energía, podriamos recomendarte lugares como {definir_lugares} para poder hacer algunas actividades.")
-
-    if tipo_hotel == 5 and presupuesto < 60000:
-        mensajes += (" Elegiste un hotel de 5 estrellas, pero el presupuesto no te alcanzará para poder pagar dicha estadia.")
-
-    if edad >= 18 and edad <= 30:
-        mensajes += (" Por tu edad, podrías disfrutar de destinos con mucho movimiento y vida nocturna como los antes mencionados.")
-    elif edad < 18:
-        mensajes += (" Por tu edad, podrías disfrutar de un viaje familiar hacia lugares como los antes mencionados, con actividades tranquilas y seguras.")
-
-    if zona == "Zona Sur" and tipo_viaje == "Auto" and maletas > 2:
-        mensajes += (" Si viajas al sur en auto, el trayecto será largo. Aunque usted debería optimizar la cantidad de maletas dentro del auto.")
-
-    if presupuesto < 40000 or duracion_estadia > 10:
-        mensajes += (" Teniendo en cuenta tu presupuesto y tu duración en el viaje, te convendría optar por lugares económicos")
-
-    if not excursiones == "Guiada":
-        mensajes += (" Si vas a ir por tu cuenta al viaje, tendrás que investigar bien las excursiones antes de viajar al lugar que haya elegido.")
-
-    if nivel_estres > 8 and temporadas == "Invierno" and tipo_hotel >= 4:
-        mensajes += (" Vaya, excelente elección mi amigo! Destinos como estos, le podría resultar útil para poder descansar y despejar su mente en esta temporada invernal.")
-
-    if duracion_estadia > 7 and presupuesto <= 50000:
-        mensajes += (" Vas a estar varios días en lugares como los antes mencionados. Por lo tanto, recomendamos que organices bien tus gastos! Ya que si usas mucho tu dinero, vas a quedarte corto en presupuesto.")
-
-    if tipo_viaje == "Avión" and zona == "Zona Sur":
-        mensajes += (" Buena idea, ya que tomar el avión para viajar a los lugares de la zona sur, ayuda a ahorrar mucho tiempo.")
-
-    if tipo_hotel == 1 or tipo_hotel == 2:
-        mensajes += (" Viaje largo con presupuesto ajustado: planificar gastos.")
-
-    if temporadas == "Verano" and nivel_estres > 6 and presupuesto > 70000 and tipo_hotel >= 4:
-        mensajes += (" Esto le resultará un viaje ideal, debido a que tendrá un verano de relajación total con un hotel premium.")
-
-    if tipo_viaje == "Colectivo" and zona == "Zona Sur" and duracion_estadia < 5:
-        mensajes += (" Viajar al sur en colectivo podría volverse bastante largo. Tal vez te conviene aumentar los días de estadía para aprovechar mejor manera el viaje.")
-
-    if tipo_viaje == "Colectivo" and nivel_estres > 7:
-        mensajes += (" Como tenés un nivel de estrés alto, te recomendamos que priorices la comodidad durante el viaje. En trayectos largos en colectivo, podrías sentirte un poco incómodo, por lo que sería bueno elegir asientos más confortables, o considerar otra opción.")
-
-    if tipo_viaje == "Colectivo" and duracion_estadia <= 3:
-        mensajes += (" Para viajes cortos, el colectivo puede ser práctico y económico")
-
-    if tipo_viaje == "Colectivo" and zona == "Zona Norte":
-        mensajes += (" Viajar en colectivo al norte, es una buena opción. Apesar de ser un viaje largo, te permite viajar de forma más tranquila.")
-
-    if tipo_viaje == "Colectivo" and temporadas == "Verano":
-        mensajes += (" Viajar en colectivo en verano te será cómodo gracias al aire acondicionado que posee el mismo, también te recomendamos llevar agua fría y ropa liviana para mayor comodidad.")
-
-    if tipo_viaje == "Colectivo" and zona == "Zona Norte" and presupuesto < 60000 and maletas <= 2:
-        mensajes += (" Viajar en colectivo al Norte, te podría resultar accesible para el viaje. Además al no llevar poco equipaje, te resultará viajar mucho mas cómodo.")
-
-    if maletas > 3:
-        mensajes += (" Y se recomienda llevar menor equipaje.")
-    else:
-        mensajes += (" Y su cantidad de equipaje adecuada.")
+    return mensajes
 
 def recomendar_hotel_y_costo(tipo_hotel, zona, categoria):
     match tipo_hotel:
@@ -143,6 +187,7 @@ def recomendar_hotel_y_costo(tipo_hotel, zona, categoria):
     return valor
 
 def obtener_costo_viaje(zona, temporadas, tipo_viaje):
+    costo_viaje = 0
     match zona:
         case "Zona Norte":
             if temporadas == "Verano":
@@ -222,6 +267,7 @@ def obtener_costo_viaje(zona, temporadas, tipo_viaje):
     return costo_viaje
 
 def obtener_valor_excursion(excursiones, temporadas, zona):
+    valor_excursion = 0
     match excursiones:
         case "Guiada":
             if temporadas == "Verano":
