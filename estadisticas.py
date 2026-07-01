@@ -1,23 +1,65 @@
+# =====================================================================
+# SECCIÓN DE PARADIGMA FUNCIONAL (Para la Defensa)
+# =====================================================================
+
+def filtrar_y_reducir_presupuesto(lista_usuarios, condicion_zona, funcion_reductora):
+    """
+    Función Genérica y Reutilizable.
+    Aplica Parametrización de comportamientos al recibir 'condicion_zona' 
+    y 'funcion_reductora' como funciones de primer orden.
+    Reduce drásticamente el código repetido.
+    """
+    valor_final = None
+    for usuario in lista_usuarios:
+        zona_actual = usuario["datos_necesarios_stats"]["zona"]
+        presupuesto = usuario["datos_necesarios_stats"]["presupuesto"]
+        
+        # 'condicion_zona' es una función que evalúa si la zona coincide
+        if condicion_zona(zona_actual):
+            if valor_final is None:
+                valor_final = presupuesto
+            else:
+                # 'funcion_reductora' determina si buscamos el máximo o el mínimo
+                valor_final = funcion_reductora(valor_final, presupuesto)
+                
+    return valor_final
+
+# Funciones de comportamiento específico (Criterios de filtrado)
+def es_zona_sur(zona): 
+    return zona == "Zona Sur"
+
+def es_zona_norte(zona): 
+    return zona == "Zona Norte"
+
+def es_zona_central(zona): 
+    return zona == "Zona Central"
+
+# Funciones reductoras personalizadas (Reemplazan a las anteriores)
+def elegir_maximo(actual, nuevo):
+    res = actual
+    if nuevo > actual:
+        res = nuevo
+    return res
+
+def elegir_minimo(actual, nuevo):
+    res = actual
+    if nuevo < actual:
+        res = nuevo
+    return res
+
+
+# =====================================================================
+# LÓGICA GENERAL DEL MÓDULO
+# =====================================================================
+
 def cant_tipo_viaje(tipo_viaje, tipo):
+    contar = 0
     if tipo_viaje == tipo:
         contar = 1
-    else:
-        contar = 0
     return contar
 
 def acumular_presupuesto(acu_presupuesto, presupuesto):
-    total = acu_presupuesto + presupuesto
-    return total
-
-def obtener_maximo(maximo, presupuesto):
-    if maximo is None or presupuesto > maximo:
-        maximo = presupuesto
-    return maximo
-
-def obtener_minimo(minimo, presupuesto):
-    if minimo is None or presupuesto < minimo:
-        minimo = presupuesto
-    return minimo
+    return acu_presupuesto + presupuesto
 
 def calcular_estadisticas(lista_usuarios):
     stats = {
@@ -40,24 +82,23 @@ def calcular_estadisticas(lista_usuarios):
 
     for usuario in lista_usuarios:
         presupuesto = usuario["datos_necesarios_stats"]["presupuesto"]
-        zona = usuario["datos_necesarios_stats"]["zona"]
         tipo_viaje = usuario["datos_necesarios_stats"]["tipo_viaje"]
 
         stats["total_presupuesto"] = acumular_presupuesto(stats["total_presupuesto"], presupuesto)
-
         stats["pres_avion"] += cant_tipo_viaje(tipo_viaje, 'Avión')
         stats["pres_auto"] += cant_tipo_viaje(tipo_viaje, 'Auto')
         stats["pres_colectivo"] += cant_tipo_viaje(tipo_viaje, 'Colectivo')
 
-        if zona == "Zona Sur":
-            stats["max_sur"] = obtener_maximo(stats["max_sur"], presupuesto)
-            stats["min_sur"] = obtener_minimo(stats["min_sur"], presupuesto)
-        elif zona == "Zona Norte":
-            stats["max_norte"] = obtener_maximo(stats["max_norte"], presupuesto)
-            stats["min_norte"] = obtener_minimo(stats["min_norte"], presupuesto)
-        elif zona == "Zona Central":
-            stats["max_central"] = obtener_maximo(stats["max_central"], presupuesto)
-            stats["min_central"] = obtener_minimo(stats["min_central"], presupuesto)
+    # UTILIZACIÓN DE LAS FUNCIONES DEL PARADIGMA FUNCIONAL
+    # Pasamos las funciones de criterio y reducción como parámetros (Primer Orden)
+    stats["max_sur"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_sur, elegir_maximo)
+    stats["min_sur"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_sur, elegir_minimo)
+    
+    stats["max_norte"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_norte, elegir_maximo)
+    stats["min_norte"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_norte, elegir_minimo)
+    
+    stats["max_central"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_central, elegir_maximo)
+    stats["min_central"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_central, elegir_minimo)
 
     if stats["usuarios_ingresados"] > 0:
         stats["porc_avion"] = (stats["pres_avion"] / stats["usuarios_ingresados"]) * 100
