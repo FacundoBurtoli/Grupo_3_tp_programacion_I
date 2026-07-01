@@ -41,10 +41,10 @@ def pedir_entero(mensaje, minimo, maximo):
     return numero
 
 def pedir_flotante(mensaje, minimo, maximo):
-    flotante = float(input(mensaje))
-    while flotante < minimo or flotante > maximo:
-        flotante = float(input(f'ERROR: {mensaje} valido: '))
-    return flotante
+    floatante = float(input(mensaje))
+    while floatante < minimo or floatante > maximo:
+        floatante = float(input(f'ERROR: {mensaje} valido: '))
+    return floatante
 
 def pedir_categoria(mensaje, opciones):
     seleccion = input(mensaje)
@@ -58,6 +58,9 @@ def pedir_categoria(mensaje, opciones):
         seleccion = input(f'ERROR: {mensaje} valido: ')
         seleccion_normalizada = limpiar_y_normalizar(seleccion)
         
+    res = opciones[0]
     for i in range(len(opciones_normalizadas)):
         if seleccion_normalizada == opciones_normalizadas[i]:
-            return opciones[i]
+            res = opciones[i]
+            
+    return res

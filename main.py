@@ -2,38 +2,62 @@ from ingresos import *
 from reglas import *
 from estadisticas import *
 from salidas import *
+from archivos import comprobar_y_cargar_archivo, guardar_datos_archivo
 
 def main():
-    seguir = "si"
-    lista_usuarios = []
+    ruta_db = "usuarios.txt"
+    lista_usuarios = comprobar_y_cargar_archivo(ruta_db)
+    
     contador_id = 0
+    if len(lista_usuarios) > 0:
+        contador_id = lista_usuarios[-1]["identificador"]
 
+    rol_autenticado = None
+    usuario_sesion = ""
+    contrasena_sesion = ""
+
+    print("=== SISTEMA DE LOGEO ===")
+    print("Para Administrador use: admin / admin123")
+    
     login = pedir_categoria("\nDesea logearse? (si/no): ", ['si', 'no'])
 
     if login == "si":
         creacion_usuario = pedir_cadena("Crear su usuario(minmo 6 caracteres): ", 6)
-        creacion_contraseña = pedir_cadena("Crear su contraseña(minmo 6 caracteres): ", 6)
-        intentos = 3
-        acceso = False
+        creacion_contrasegna = pedir_cadena("Crear su contraseña(minmo 6 caracteres): ", 6)
+        
+        # Validamos si las credenciales ingresadas corresponden al Administrador
+        if creacion_usuario == "admin" and creacion_contrasegna == "admin123":
+            rol_autenticado = "Administrador"
+            print("[-ACCESO CONCEDIDO - ROL: ADMINISTRADOR-]")
+        else:
+            intentos = 3
+            acceso = False
 
-        while intentos > 0:
-            usuario = pedir_cadena("Ingrese su usuario para acceder: ", 6)
-            contraseña = pedir_cadena("Ingrese su contraseña para acceder: ", 6)
+            while intentos > 0:
+                usuario = pedir_cadena("Ingrese su usuario para acceder: ", 6)
+                contraseña = pedir_cadena("Ingrese su contraseña para acceder: ", 6)
 
-            if usuario == creacion_usuario and contraseña == creacion_contraseña:
-                acceso = True
-                print("[-ACCESO CONCEDIDO-]")
-                break
-            else:
-                intentos -= 1
-                print(f"Error! Te quedan: {intentos} intentos.")
-            
-        if not acceso:
-            print("Acceso denegado.")
-            return
+                if usuario == creacion_usuario and contraseña == creacion_contrasegna:
+                    acceso = True
+                    rol_autenticado = "Usuario"
+                    usuario_sesion = creacion_usuario
+                    contrasena_sesion = creacion_contrasegna
+                    print("[-ACCESO CONCEDIDO - ROL: USUARIO-]")
+                    break
+                else:
+                    intentos -= 1
+                    print(f"Error! Te quedan: {intentos} intentos.")
+                
+            if not acceso:
+                print("Acceso denegado.")
+                return
     elif login == "no":
         return
 
+    seguir = "no"
+    if rol_autenticado == "Usuario":
+        seguir = "si"
+        
     while seguir == "si":
         contador_id += 1
         
@@ -70,7 +94,9 @@ def main():
                 "edad": edad,
                 "genero": genero,
                 "altura": flotante,
-                "nivel_estres": nivel_estres
+                "nivel_estres": nivel_estres,
+                "usuario": usuario_sesion,
+                "contrasena": contrasena_sesion
             },
             "recomendaciones": mensajes_lista,
             "datos_necesarios_stats": {
@@ -87,15 +113,24 @@ def main():
         }
         
         lista_usuarios.append(usuario_dicc)
-
         seguir = pedir_categoria("\nDesea seguir? (si/no): ", ['si', 'no'])
 
+    # Guardamos los datos nuevos en el archivo de texto plano si operó un Usuario
+    if rol_autenticado == "Usuario" and len(lista_usuarios) > 0:
+        guardar_datos_archivo(ruta_db, lista_usuarios)
+
+    # Bloque de salidas según el rol autenticado
     if len(lista_usuarios) > 0:
         diccionario_stats = calcular_estadisticas(lista_usuarios)
         
-        for u in lista_usuarios:
-            mostrar_informe_individual(u, diccionario_stats["promedio"])
-            
-        mostrar_informe_final(diccionario_stats)
+        if rol_autenticado == "Administrador":
+            mostrar_informe_final(diccionario_stats)
+        elif rol_autenticado == "Usuario":
+            # Un usuario común solo ve los registros asociados a su nombre de usuario de la sesión
+            for u in lista_usuarios:
+                if u["datos_ingresados"]["usuario"] == usuario_sesion:
+                    mostrar_informe_individual(u, diccionario_stats["promedio"])
+    else:
+        print("\nNo hay datos en el sistema para procesar.")
 
 main()

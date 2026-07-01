@@ -27,7 +27,8 @@ def mostrar_informe_individual(usuario, promedio_global):
 
     print("[-MENSAJES EXTRA-]")
     for mensaje in usuario["recomendaciones"]:
-        print(f"- {mensaje}")
+        if mensaje.strip() != "":
+            print(f"- {mensaje}")
 
     print("[-ANALISIS-]")
     if usuario['datos_necesarios_stats']['costo_total'] > usuario['datos_necesarios_stats']['presupuesto']:
