@@ -1,6 +1,3 @@
-# =====================================================================
-# SECCIÓN DE PARADIGMA FUNCIONAL (Para la Defensa)
-# =====================================================================
 
 def filtrar_y_reducir_presupuesto(lista_usuarios, condicion_zona, funcion_reductora):
     """
@@ -14,17 +11,14 @@ def filtrar_y_reducir_presupuesto(lista_usuarios, condicion_zona, funcion_reduct
         zona_actual = usuario["datos_necesarios_stats"]["zona"]
         presupuesto = usuario["datos_necesarios_stats"]["presupuesto"]
         
-        # 'condicion_zona' es una función que evalúa si la zona coincide
         if condicion_zona(zona_actual):
             if valor_final is None:
                 valor_final = presupuesto
             else:
-                # 'funcion_reductora' determina si buscamos el máximo o el mínimo
                 valor_final = funcion_reductora(valor_final, presupuesto)
                 
     return valor_final
 
-# Funciones de comportamiento específico (Criterios de filtrado)
 def es_zona_sur(zona): 
     return zona == "Zona Sur"
 
@@ -34,7 +28,6 @@ def es_zona_norte(zona):
 def es_zona_central(zona): 
     return zona == "Zona Central"
 
-# Funciones reductoras personalizadas (Reemplazan a las anteriores)
 def elegir_maximo(actual, nuevo):
     res = actual
     if nuevo > actual:
@@ -46,11 +39,6 @@ def elegir_minimo(actual, nuevo):
     if nuevo < actual:
         res = nuevo
     return res
-
-
-# =====================================================================
-# LÓGICA GENERAL DEL MÓDULO
-# =====================================================================
 
 def cant_tipo_viaje(tipo_viaje, tipo):
     contar = 0
@@ -89,8 +77,6 @@ def calcular_estadisticas(lista_usuarios):
         stats["pres_auto"] += cant_tipo_viaje(tipo_viaje, 'Auto')
         stats["pres_colectivo"] += cant_tipo_viaje(tipo_viaje, 'Colectivo')
 
-    # UTILIZACIÓN DE LAS FUNCIONES DEL PARADIGMA FUNCIONAL
-    # Pasamos las funciones de criterio y reducción como parámetros (Primer Orden)
     stats["max_sur"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_sur, elegir_maximo)
     stats["min_sur"] = filtrar_y_reducir_presupuesto(lista_usuarios, es_zona_sur, elegir_minimo)
     

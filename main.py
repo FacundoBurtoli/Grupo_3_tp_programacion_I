@@ -25,7 +25,6 @@ def main():
         creacion_usuario = pedir_cadena("Crear su usuario(minmo 6 caracteres): ", 6)
         creacion_contrasegna = pedir_cadena("Crear su contraseña(minmo 6 caracteres): ", 6)
         
-        # Validamos si las credenciales ingresadas corresponden al Administrador
         if creacion_usuario == "admin" and creacion_contrasegna == "admin123":
             rol_autenticado = "Administrador"
             print("[-ACCESO CONCEDIDO - ROL: ADMINISTRADOR-]")
@@ -115,18 +114,15 @@ def main():
         lista_usuarios.append(usuario_dicc)
         seguir = pedir_categoria("\nDesea seguir? (si/no): ", ['si', 'no'])
 
-    # Guardamos los datos nuevos en el archivo de texto plano si operó un Usuario
     if rol_autenticado == "Usuario" and len(lista_usuarios) > 0:
         guardar_datos_archivo(ruta_db, lista_usuarios)
 
-    # Bloque de salidas según el rol autenticado
     if len(lista_usuarios) > 0:
         diccionario_stats = calcular_estadisticas(lista_usuarios)
         
         if rol_autenticado == "Administrador":
             mostrar_informe_final(diccionario_stats)
         elif rol_autenticado == "Usuario":
-            # Un usuario común solo ve los registros asociados a su nombre de usuario de la sesión
             for u in lista_usuarios:
                 if u["datos_ingresados"]["usuario"] == usuario_sesion:
                     mostrar_informe_individual(u, diccionario_stats["promedio"])
