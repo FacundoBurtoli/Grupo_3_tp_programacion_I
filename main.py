@@ -22,8 +22,8 @@ def main():
     login = pedir_categoria("\nDesea logearse? (si/no): ", ['si', 'no'])
 
     if login == "si":
-        creacion_usuario = pedir_cadena("Crear su usuario(minmo 6 caracteres): ", 6)
-        creacion_contrasegna = pedir_cadena("Crear su contraseña(minmo 6 caracteres): ", 6)
+        creacion_usuario = pedir_cadena("Crear su usuario(minmo 4 caracteres): ", 4)
+        creacion_contrasegna = pedir_cadena("Crear su contraseña(minmo 4 caracteres): ", 4)
         
         if creacion_usuario == "admin" and creacion_contrasegna == "admin123":
             rol_autenticado = "Administrador"

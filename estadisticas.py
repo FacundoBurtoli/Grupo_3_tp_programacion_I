@@ -20,13 +20,22 @@ def filtrar_y_reducir_presupuesto(lista_usuarios, condicion_zona, funcion_reduct
     return valor_final
 
 def es_zona_sur(zona): 
-    return zona == "Zona Sur"
+    bandera = False
+    if zona == "Zona Sur":
+        bandera = True
+    return bandera
 
 def es_zona_norte(zona): 
-    return zona == "Zona Norte"
+    bandera = False
+    if zona == "Zona Norte":
+        bandera = True
+    return bandera
 
 def es_zona_central(zona): 
-    return zona == "Zona Central"
+    bandera = False
+    if zona == "Zona Central":
+        bandera = True
+    return bandera
 
 def elegir_maximo(actual, nuevo):
     res = actual
